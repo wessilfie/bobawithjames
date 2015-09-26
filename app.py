@@ -1,6 +1,9 @@
 from __future__ import print_function
 import httplib2
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 from apiclient import discovery
 import oauth2client
@@ -8,7 +11,8 @@ from oauth2client import client
 from oauth2client import tools
 
 import datetime
-from time import gmtime, strftime
+import base64
+from time import strftime
 import dateutil.parser
 
 try:
@@ -39,9 +43,9 @@ def main():
     service = discovery.build('calendar', 'v3', http=http)
 
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    print('Getting the upcoming 10 events')
+    print('Getting the upcoming 20 events')
     eventsResult = service.events().list(
-        calendarId='primary', timeMin=now, maxResults=10, singleEvents=True,
+        calendarId='primary', timeMin=now, maxResults=20, singleEvents=True,
         orderBy='startTime').execute()
     events = eventsResult.get('items', [])
 
@@ -104,6 +108,32 @@ def signup():
 	email = request.form['email']
 	time = request.form['time']
 	print(name, email, time)
+
+	me = "jamesxue100@gmail.com"
+	you = email
+
+	msg = MIMEMultipart('alternative')
+	msg['Subject'] = "Link"
+	msg['From'] = me
+	msg['To'] = you
+
+	html = open("/Users/jamesxue/Documents/projects/boba/templates/email.html").read()
+	print(html)
+
+	part2 = MIMEText(html, 'html')
+
+	msg.attach(part2)
+
+	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
+	s.ehlo()
+	s.starttls()
+	s.ehlo()
+	username = "jamesxue100@gmail.com"
+	password = base64.b64decode('ZmxpZ2h0bGVzc2JpcmQ=')
+	s.login(username,password) 
+	s.sendmail(me, you, msg.as_string())
+	s.quit()
+
 	return redirect('/yay')
 
 @app.route('/yay')
