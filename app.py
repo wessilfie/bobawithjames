@@ -30,7 +30,6 @@ from flask import Flask, render_template, json, request, redirect
 app = Flask(__name__)
 app.config['DEBUG'] = True 
 
-
 @app.route('/')
 def main():
     """Shows basic usage of the Google Calendar API.
