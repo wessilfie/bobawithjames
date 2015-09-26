@@ -8,7 +8,6 @@ beautifulsoup4==4.3.2
 binstar==0.11.0
 bitarray==0.8.1
 blaze==0.8.0
-blz==0.6.2
 bokeh==0.9.0
 boto==2.38.0
 Bottleneck==1.0.0
