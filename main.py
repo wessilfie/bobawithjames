@@ -26,7 +26,7 @@ app = Flask(__name__)
 app.config['DEBUG'] = True 
 
 @app.route('/')
-def hello():
+def main():
     """Shows basic usage of the Google Calendar API.
 
     Creates a Google Calendar API service object and outputs a list of the next
