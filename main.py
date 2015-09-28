@@ -5,6 +5,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+from flask import Flask, render_template, json, request, redirect
+
 from apiclient import discovery
 import oauth2client
 from oauth2client import client
@@ -14,18 +16,11 @@ import datetime
 import base64
 from time import strftime
 import dateutil.parser
-
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
+import argparse
 
 SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Calendar API Quickstart'
-
-from flask import Flask, render_template, json, request, redirect
 
 app = Flask(__name__)
 app.config['DEBUG'] = True 
@@ -94,6 +89,7 @@ def get_credentials():
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
+        flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
         if flags:
             credentials = tools.run_flow(flow, store, flags)
         else: # Needed only for compatability with Python 2.6
