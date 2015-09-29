@@ -1,11 +1,6 @@
 from __future__ import print_function
 import httplib2
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
-from flask import Flask, render_template, json, request, redirect
 
 from apiclient import discovery
 import oauth2client
@@ -13,10 +8,23 @@ from oauth2client import client
 from oauth2client import tools
 
 import datetime
+
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+from flask import Flask, render_template, json, request, redirect
+
 import base64
 from time import strftime
 import dateutil.parser
 import argparse
+
+# try:
+#     import argparse
+#     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+# except ImportError:
+#     flags = None
 
 SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
 CLIENT_SECRET_FILE = 'client_secret.json'
@@ -124,7 +132,7 @@ def signup():
 	s.starttls()
 	s.ehlo()
 	username = "jamesxue100@gmail.com"
-	password = base64.b64decode('ZmxpZ2h0bGVzc2JpcmQ=')
+	password = base64.b64decode('RmwxZ2h0bDM=')
 	s.login(username,password) 
 	s.sendmail(me, you, msg.as_string())
 	s.quit()
