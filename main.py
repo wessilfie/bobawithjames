@@ -18,7 +18,6 @@ from flask import Flask, render_template, json, request, redirect
 import base64
 from time import strftime
 import dateutil.parser
-# import argparse
 
 try:
     import argparse
@@ -97,7 +96,6 @@ def get_credentials():
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
-        # flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
         if flags:
             credentials = tools.run_flow(flow, store, flags)
         else: # Needed only for compatability with Python 2.6
@@ -132,10 +130,9 @@ def signup():
 	s.starttls()
 	s.ehlo()
 	username = "jamesxue100@gmail.com"
-	password = base64.b64decode('RmwxZ2h0bDM=')
-	s.login(username,password) 
-	s.sendmail(me, you, msg.as_string())
-	s.quit()
+	# s.login(username,password) 
+	# s.sendmail(me, you, msg.as_string())
+	# s.quit()
 
 	return redirect('/yay')
 
