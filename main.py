@@ -99,7 +99,8 @@ def get_credentials():
         # if flags:
         #     credentials = tools.run_flow(flow, store, flags)
         # else: # Needed only for compatability with Python 2.6
-        credentials = tools.run(flow, store)
+        # credentials = tools.run(flow, store)
+        credentials = tools.run_flow(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
 
