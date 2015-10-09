@@ -14,6 +14,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+import flask
 from flask import Flask, render_template, json, request, redirect
 
 import base64
