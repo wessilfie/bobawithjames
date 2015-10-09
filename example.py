@@ -27,7 +27,7 @@ def index():
 @app.route('/oauth2callback')
 def oauth2callback():
   flow = client.flow_from_clientsecrets(
-      'client_secrets.json',
+      'client_secret.json',
       scope='https://www.googleapis.com/auth/drive.metadata.readonly',
       redirect_uri=flask.url_for('oauth2callback', _external=True))
   if 'code' not in flask.request.args:
@@ -42,6 +42,7 @@ def oauth2callback():
 
 if __name__ == '__main__':
   import uuid
-  app.secret_key = str(uuid.uuid4())
+  # app.secret_key = str(uuid.uuid4())
+  app.secret_key = "this is a secret"
   # app.debug = False
-  app.run(
+  app.run()
