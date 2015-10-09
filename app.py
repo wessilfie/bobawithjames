@@ -32,11 +32,11 @@ except ImportError:
 SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Calendar API Quickstart'
-SECRET_KEY = 'jkDyPiYvflo_OnWta3_eJEuJ'
+SECRET_KEY = str(uuid.uuid4())
 
 app = Flask(__name__)
 app.debug = True 
-app.secret_key = 'jkDyPiYvflo_OnWta3_eJEuJ'
+app.secret_key = str(uuid.uuid4())
 
 @app.route('/')
 def main():
@@ -45,10 +45,6 @@ def main():
     Creates a Google Calendar API service object and outputs a list of the next
     10 events on the user's calendar.
     """
-    # credentials = get_credentials()
-    # http = credentials.authorize(httplib2.Http())
-    # service = discovery.build('calendar', 'v3', http=http)
-
 
     if 'credentials' not in flask.session:
         return flask.redirect(flask.url_for('oauth2callback'))
@@ -56,14 +52,8 @@ def main():
     if credentials.access_token_expired:
         return flask.redirect(flask.url_for('oauth2callback'))
     else:
-        # http_auth = credentials.authorize(httplib2.Http())
         http = credentials.authorize(httplib2.Http())
-        # drive_service = discovery.build('drive', 'v2', http_auth)
         service = discovery.build('calendar', 'v3', http=http)
-        # files = drive_service.files().list().execute()
-        # return json.dumps(files)
-
-
 
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     print('Getting the upcoming 20 events')
@@ -108,39 +98,11 @@ def oauth2callback():
     Returns:
         Credentials, the obtained credential.
     """
-    # home_dir = os.path.expanduser('~')
-    # credential_dir = os.path.join(home_dir, '.credentials')
-    # if not os.path.exists(credential_dir):
-    #     os.makedirs(credential_dir)
-    # credential_path = os.path.join(credential_dir,
-    #                                'calendar-quickstart.json')
-
-    # store = oauth2client.file.Storage(credential_path)
-    # credentials = store.get()
-    # if not credentials or credentials.invalid:
-    #     # flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
-
-    #     # https://www.googleapis.com/auth/drive.metadata.readonly
-    #     # flow = client.flow_from_clientsecrets(
-    #     #   'client_secret.json',
-    #     #   scope='https://accounts.google.com/o/oauth2/auth',
-    #     #   redirect_uri=flask.url_for('oauth2callback', _external=True))
-    #     flow.user_agent = APPLICATION_NAME
-    #     if flags:
-    #         # credentials = tools.run_flow(flow, store, flags)
-    #         auth_code = flask.request.args.get('code')
-    #         credentials = flow.step2_exchange(auth_code)
-    #     else: # Needed only for compatability with Python 2.6
-    #         # credentials = tools.run(flow, store)
-    #         auth_code = flask.request.args.get('code')
-    #         credentials = flow.step2_exchange(auth_code)
-    #     print('Storing credentials to ' + credential_path)
-    # return credentials
 
     flow = client.flow_from_clientsecrets(
-      'client_secret.json',
-      scope='https://www.googleapis.com/auth/calendar',
-      redirect_uri=flask.url_for('oauth2callback', _external=True))
+        'client_secret.json',
+        scope='https://www.googleapis.com/auth/calendar',
+        redirect_uri=flask.url_for('oauth2callback', _external=True))
     if 'code' not in flask.request.args:
         auth_uri = flow.step1_get_authorize_url()
         return flask.redirect(auth_uri)
@@ -149,11 +111,6 @@ def oauth2callback():
         credentials = flow.step2_exchange(auth_code)
         flask.session['credentials'] = credentials.to_json()
         return flask.redirect(flask.url_for('main'))
-
-
-
-
-
 
 
 @app.route('/signup', methods = ['GET','POST'])
@@ -183,7 +140,7 @@ def signup():
 	s.starttls()
 	s.ehlo()
 	username = "jamesxue100@gmail.com"
-	# s.login(username,password) 
+	# s.login(username, password) 
 	# s.sendmail(me, you, msg.as_string())
 	# s.quit()
 
@@ -195,5 +152,4 @@ def yay():
 
 
 if __name__ == "__main__":
-    # app.secret_key = str(uuid.uuid4())
     app.run(host='0.0.0.0')
