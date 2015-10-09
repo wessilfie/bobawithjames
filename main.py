@@ -96,14 +96,29 @@ def get_credentials():
     store = oauth2client.file.Storage(credential_path)
     credentials = store.get()
     if not credentials or credentials.invalid:
-        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        # flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        flow = client.flow_from_clientsecrets(
+          'client_secret.json',
+          scope='https://www.googleapis.com/auth/drive.metadata.readonly',
+          redirect_uri=flask.url_for('oauth2callback', _external=True))
         flow.user_agent = APPLICATION_NAME
         if flags:
-            credentials = tools.run_flow(flow, store, flags)
+            # credentials = tools.run_flow(flow, store, flags)
+            auth_code = flask.request.args.get('code')
+            credentials = flow.step2_exchange(auth_code)
         else: # Needed only for compatability with Python 2.6
-            credentials = tools.run(flow, store)
+            # credentials = tools.run(flow, store)
+            auth_code = flask.request.args.get('code')
+            credentials = flow.step2_exchange(auth_code)
         print('Storing credentials to ' + credential_path)
     return credentials
+
+
+
+
+
+
+
 
 @app.route('/signup', methods = ['GET','POST'])
 def signup():
