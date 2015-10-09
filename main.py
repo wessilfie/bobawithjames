@@ -6,6 +6,7 @@ from apiclient import discovery
 import oauth2client
 from oauth2client import client
 from oauth2client import tools
+from oauth2client.tools import run_flow, argparser
 
 import datetime
 
@@ -22,7 +23,7 @@ import dateutil.parser
 try:
     import argparse
     # flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-    flags = ''
+    flags = argparser.parse_args([])
 except ImportError:
     flags = None
 
