@@ -97,9 +97,11 @@ def get_credentials():
     credentials = store.get()
     if not credentials or credentials.invalid:
         # flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+
+        #https://www.googleapis.com/auth/drive.metadata.readonly
         flow = client.flow_from_clientsecrets(
           'client_secret.json',
-          scope='https://www.googleapis.com/auth/drive.metadata.readonly',
+          scope='https://accounts.google.com/o/oauth2/auth',
           redirect_uri=flask.url_for('oauth2callback', _external=True))
         flow.user_agent = APPLICATION_NAME
         if flags:
