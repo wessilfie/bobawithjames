@@ -43,6 +43,6 @@ def oauth2callback():
 if __name__ == '__main__':
   import uuid
   # app.secret_key = str(uuid.uuid4())
-  app.secret_key = "this is a secret"
+  app.secret_key = "this is a secret_key"
   # app.debug = False
   app.run()
