@@ -46,18 +46,21 @@ def main():
     10 events on the user's calendar.
     """
 
-    # if 'credentials' not in flask.session:
-    #     return flask.redirect(flask.url_for('oauth2callback'))
-    # credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
-    # if credentials.access_token_expired:
-    #     return flask.redirect(flask.url_for('oauth2callback'))
-    # else:
-    #     http = credentials.authorize(httplib2.Http())
-    #     service = discovery.build('calendar', 'v3', http=http)
+    home_dir = os.path.expanduser('~')
+    credential_dir = os.path.join(home_dir, '.credentials')
+    if not os.path.exists(credential_dir):
+        os.makedirs(credential_dir)
+    credential_path = os.path.join(credential_dir,
+                                   'calendar-python-quickstart.json')
 
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('calendar', 'v3', http=http)
+    if 'credentials' not in flask.session:
+        return flask.redirect(flask.url_for('oauth2callback'))
+    credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
+    if credentials.access_token_expired:
+        return flask.redirect(flask.url_for('oauth2callback'))
+    else:
+        http = credentials.authorize(httplib2.Http())
+        service = discovery.build('calendar', 'v3', http=http)
 
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     print('Getting the upcoming 20 events')
@@ -91,26 +94,6 @@ def main():
     print(return_list)
     return render_template('index.html', api_data=return_list)
 
-def get_credentials():
-    home_dir = os.path.expanduser('~')
-    credential_dir = os.path.join(home_dir, '.credentials')
-    if not os.path.exists(credential_dir):
-        os.makedirs(credential_dir)
-    credential_path = os.path.join(credential_dir,
-                                   'calendar-python-quickstart.json')
-
-    store = oauth2client.file.Storage(credential_path)
-    credentials = store.get()
-    if not credentials or credentials.invalid:
-        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
-        flow.user_agent = APPLICATION_NAME
-        if flags:
-            credentials = tools.run_flow(flow, store, flags)
-        else: # Needed only for compatability with Python 2.6
-            credentials = tools.run(flow, store)
-        print('Storing credentials to ' + credential_path)
-    return credentials
-
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -139,45 +122,42 @@ def oauth2callback():
 
 @app.route('/signup', methods = ['GET','POST'])
 def signup():
-    name = request.form['name']
-    email = request.form['email']
-    location = request.form['location']
-    time = request.form['time']
+	name = request.form['name']
+	email = request.form['email']
+	time = request.form['time']
+	print(name, email, time)
 
-    print(name, email, location, time)
+	me = "jamesxue100@gmail.com"
+	you = email
 
+	msg = MIMEMultipart('alternative')
+	msg['Subject'] = "Link"
+	msg['From'] = me
+	msg['To'] = you
 
-    me = "bobawithjames@gmail.com"
-    you = email
+	html = open("/Users/jamesxue/Documents/projects/boba/templates/email.html").read()
+	print(html)
 
-    to = [you, 'jamesxue100@gmail.com']
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = "You're getting boba with James!"
-    msg['From'] = me
-    msg['To'] = you
-    msg['Cc'] = 'jamesxue100@gmail.com'
+	part2 = MIMEText(html, 'html')
 
-    html = '<html><head></head><body><p>Hi there '+name+'!<br>You are scheduled for boba at '+location+' at '+time+'.<br>If you have any questions, email James (cced on this email), text James at (949)554-5535 or message him on <a href="https://www.facebook.com/jamesxue100">Facebook</a>.</p></body</html>'
+	msg.attach(part2)
 
-    part2 = MIMEText(html, 'html')
+	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
+	s.ehlo()
+	s.starttls()
+	s.ehlo()
+	username = "jamesxue100@gmail.com"
+    password = base64.b64decode('RmwxZ2h0bDM=')
 
-    msg.attach(part2)
+	s.login(username, password) 
+	s.sendmail(me, you, msg.as_string())
+	s.quit()
 
-    s = smtplib.SMTP(host='smtp.gmail.com', port=587)
-    s.ehlo()
-    s.starttls()
-    s.ehlo()
-    username = "bobawithjames@gmail.com"
-    password = "bobawithjames123"
-    s.login(username, password)
-    s.sendmail(me, to, msg.as_string())
-    s.quit()
-
-    return redirect('/yay')
+	return redirect('/yay')
 
 @app.route('/yay')
 def yay():
-    return render_template('yay.html')
+	return render_template('yay.html')
 
 
 if __name__ == "__main__":
