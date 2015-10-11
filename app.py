@@ -53,6 +53,8 @@ def main():
     EST = pytz.timezone('US/Eastern')
     d = EST.localize(d).isoformat()
 
+    print(d)
+    
     f = {'key' : 'AIzaSyCMCTCPE4Rjla4uUs4vrO1nyQVa0Xu5XAc',
     'maxResults' : '50',
     'orderBy' : 'startTime',
