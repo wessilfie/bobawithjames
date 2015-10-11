@@ -7,6 +7,7 @@ import oauth2client
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.tools import run_flow, argparser
+import urllib2
 
 import datetime
 import uuid
@@ -45,6 +46,11 @@ def main():
     Creates a Google Calendar API service object and outputs a list of the next
     10 events on the user's calendar.
     """
+    content = urllib2.urlopen("https://www.googleapis.com/calendar/v3/calendars/jamesxue100@gmail.com/events?key=AIzaSyCMCTCPE4Rjla4uUs4vrO1nyQVa0Xu5XAc").read()
+
+    
+    content = json.loads(content)
+    # print(content)
 
     # if 'credentials' not in flask.session:
     #     return flask.redirect(flask.url_for('oauth2callback'))
@@ -55,16 +61,21 @@ def main():
     #     http = credentials.authorize(httplib2.Http())
     #     service = discovery.build('calendar', 'v3', http=http)
 
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('calendar', 'v3', http=http)
+    # credentials = get_credentials()
+    # http = credentials.authorize(httplib2.Http())
+    # service = discovery.build('calendar', 'v3', http=http)
 
-    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    print('Getting the upcoming 20 events')
-    eventsResult = service.events().list(
-        calendarId='primary', timeMin=now, maxResults=20, singleEvents=True,
-        orderBy='startTime').execute()
-    events = eventsResult.get('items', [])
+    # now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    # print('Getting the upcoming 20 events')
+    # eventsResult = service.events().list(
+    #     calendarId='primary', timeMin=now, maxResults=20, singleEvents=True,
+    #     orderBy='startTime').execute()
+
+    # print(eventsResult)
+
+    # events = eventsResult.get('items', [])
+    events = content['items'][:20]
+    print(events)
 
     if not events:
         print('No upcoming events found.')
@@ -81,7 +92,7 @@ def main():
         end = dateutil.parser.parse(end)
         end_time = end.strftime('%I:%M %p')
         end_date = end.strftime("%a %m/%d")
-        print(start, end, event['summary'].encode('utf-8'))
+        # print(start, end)
 
         if (start_time > latest_time):
             return_list.append([latest_time, latest_date, start_time, start_date])
@@ -91,25 +102,25 @@ def main():
     print(return_list)
     return render_template('index.html', api_data=return_list)
 
-def get_credentials():
-    home_dir = os.path.expanduser('~')
-    credential_dir = os.path.join(home_dir, '.credentials')
-    if not os.path.exists(credential_dir):
-        os.makedirs(credential_dir)
-    credential_path = os.path.join(credential_dir,
-                                   'calendar-python-quickstart.json')
+# def get_credentials():
+#     home_dir = os.path.expanduser('~')
+#     credential_dir = os.path.join(home_dir, '.credentials')
+#     if not os.path.exists(credential_dir):
+#         os.makedirs(credential_dir)
+#     credential_path = os.path.join(credential_dir,
+#                                    'calendar-python-quickstart.json')
 
-    store = oauth2client.file.Storage(credential_path)
-    credentials = store.get()
-    if not credentials or credentials.invalid:
-        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
-        flow.user_agent = APPLICATION_NAME
-        if flags:
-            credentials = tools.run_flow(flow, store, flags)
-        else: # Needed only for compatability with Python 2.6
-            credentials = tools.run(flow, store)
-        print('Storing credentials to ' + credential_path)
-    return credentials
+#     store = oauth2client.file.Storage(credential_path)
+#     credentials = store.get()
+#     if not credentials or credentials.invalid:
+#         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+#         flow.user_agent = APPLICATION_NAME
+#         if flags:
+#             credentials = tools.run_flow(flow, store, flags)
+#         else: # Needed only for compatability with Python 2.6
+#             credentials = tools.run(flow, store)
+#         print('Storing credentials to ' + credential_path)
+#     return credentials
 
 
 @app.route('/oauth2callback')
