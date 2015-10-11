@@ -54,7 +54,7 @@ def main():
     d = EST.localize(d).isoformat()
 
     print(d)
-    
+
     f = {'key' : 'AIzaSyCMCTCPE4Rjla4uUs4vrO1nyQVa0Xu5XAc',
     'maxResults' : '50',
     'orderBy' : 'startTime',
@@ -99,22 +99,50 @@ def main():
     if not events:
         print('No upcoming events found.')
 
-    latest_time = strftime('%I:%M %p')
-    latest_date = strftime("%a %m/%d/%y")
     return_list = []
+    latest_time = strftime('%-I:%M %p')
+    latest_time_24 = strftime('%H:%M')
+    latest_time_noampm = strftime('%H:%M')
+    latest_date = strftime("%a %m/%d/%y")
+
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         end = event['end'].get('dateTime', event['end'].get('date'))
+        
         start = dateutil.parser.parse(start)
-        start_time = start.strftime('%I:%M %p')
+        start_time = start.strftime('%-I:%M %p')
+        start_time_24 = start.strftime('%H:%M')
+        start_time_noampm = start.strftime('%H:%M')
         start_date = start.strftime("%a %m/%d/%y")
         end = dateutil.parser.parse(end)
-        end_time = end.strftime('%I:%M %p')
+        end_time = end.strftime('%-I:%M %p')
+        end_time_24 = end.strftime('%H:%M')
+        end_time_noampm = end.strftime('%H:%M')
         end_date = end.strftime("%a %m/%d/%y")
 
-        if (start_time > latest_time):
+        if (start_date == latest_date):
+            if (start_time_24 > latest_time_24):
+                print(start_date, latest_date)
+                print(latest_time_24)
+                if (latest_time_24 < '10:00'):
+                    latest_time = end_time
+                    latest_time_24 = end_time_24
+                    latest_time_noampm = end_time_noampm
+                    latest_date = end_date
+                    continue
+                
+                print(start_time_noampm, latest_time_noampm)
+                FMT = '%H:%M'
+                tdelta = datetime.datetime.strptime(start_time_noampm, FMT) - datetime.datetime.strptime(latest_time_noampm, FMT)
+                print(abs(tdelta.total_seconds()))
+                if abs(tdelta.total_seconds()) >= 1800:
+                    return_list.append([latest_time, latest_date, start_time, start_date])
+
+        else:
             return_list.append([latest_time, latest_date, start_time, start_date])
         latest_time = end_time
+        latest_time_24 = end_time_24
+        latest_time_noampm = end_time_noampm
         latest_date = end_date
 
     print(return_list)
