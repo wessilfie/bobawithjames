@@ -50,7 +50,8 @@ def main():
     """
 
     d = datetime.datetime.now()
-    d = pytz.UTC.localize(d).isoformat()
+    EST = pytz.timezone('US/Eastern')
+    d = EST.localize(d).isoformat()
 
     f = {'key' : 'AIzaSyCMCTCPE4Rjla4uUs4vrO1nyQVa0Xu5XAc',
     'maxResults' : '50',
@@ -92,7 +93,6 @@ def main():
     # events = eventsResult.get('items', [])
 
     events = content['items'][:40]
-    print(events)
 
     if not events:
         print('No upcoming events found.')
@@ -109,7 +109,6 @@ def main():
         end = dateutil.parser.parse(end)
         end_time = end.strftime('%I:%M %p')
         end_date = end.strftime("%a %m/%d/%y")
-        # print(start, end)
 
         if (start_time > latest_time):
             return_list.append([latest_time, latest_date, start_time, start_date])
