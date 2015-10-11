@@ -214,7 +214,7 @@ def signup():
     msg['To'] = you
     msg['Cc'] = 'jamesxue100@gmail.com'
 
-    html = '<html><head></head><body><p>Hi there '+name+'!<br>You are scheduled for boba at '+location+' at '+time+'.<br>If you have any questions, email James (cced on this email), text James at (949)554-5535 or message him on <a href="https://www.facebook.com/jamesxue100">Facebook</a>.</p></body</html>'
+    html = '<html><head></head><body><p>Hi there '+name+'!<br>You are scheduled for boba with James. (*＾▽＾)／<br>Location: '+location+'.<br>Time: '+time+'.<br>If you have any questions, email James (cced on this email), text James at (949)554-5535 or message him on <a href="https://www.facebook.com/jamesxue100">Facebook</a>.</p></body</html>'
 
     part2 = MIMEText(html, 'html')
 
