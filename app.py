@@ -8,6 +8,8 @@ from oauth2client import client
 from oauth2client import tools
 from oauth2client.tools import run_flow, argparser
 import urllib2
+import urllib
+import pytz
 
 import datetime
 import uuid
@@ -46,10 +48,24 @@ def main():
     Creates a Google Calendar API service object and outputs a list of the next
     10 events on the user's calendar.
     """
-    content = urllib2.urlopen("https://www.googleapis.com/calendar/v3/calendars/jamesxue100@gmail.com/events?key=AIzaSyCMCTCPE4Rjla4uUs4vrO1nyQVa0Xu5XAc").read()
 
+    d = datetime.datetime.now()
+    d = pytz.UTC.localize(d).isoformat()
+
+    f = {'key' : 'AIzaSyCMCTCPE4Rjla4uUs4vrO1nyQVa0Xu5XAc',
+    'maxResults' : '50',
+    'orderBy' : 'startTime',
+    'singleEvents' : 'true',
+    'timeMin' : d}
+
+    flags = urllib.urlencode(f)
+
+    url = "https://www.googleapis.com/calendar/v3/calendars/jamesxue100@gmail.com/events?" + flags
+
+    content = urllib2.urlopen(url).read()
     
     content = json.loads(content)
+
     # print(content)
 
     # if 'credentials' not in flask.session:
@@ -74,24 +90,25 @@ def main():
     # print(eventsResult)
 
     # events = eventsResult.get('items', [])
-    events = content['items'][:20]
+
+    events = content['items'][:40]
     print(events)
 
     if not events:
         print('No upcoming events found.')
 
     latest_time = strftime('%I:%M %p')
-    latest_date = strftime("%a %m/%d")
+    latest_date = strftime("%a %m/%d/%y")
     return_list = []
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         end = event['end'].get('dateTime', event['end'].get('date'))
         start = dateutil.parser.parse(start)
         start_time = start.strftime('%I:%M %p')
-        start_date = start.strftime("%a %m/%d")
+        start_date = start.strftime("%a %m/%d/%y")
         end = dateutil.parser.parse(end)
         end_time = end.strftime('%I:%M %p')
-        end_date = end.strftime("%a %m/%d")
+        end_date = end.strftime("%a %m/%d/%y")
         # print(start, end)
 
         if (start_time > latest_time):
