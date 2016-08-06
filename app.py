@@ -17,6 +17,8 @@ import pytz
 import datetime
 import uuid
 
+from twilio.rest import TwilioRestClient
+
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -56,7 +58,7 @@ def main():
     EST = pytz.timezone('US/Eastern')
     d = EST.localize(d).isoformat()
 
-    print(d)
+    # print(d)
 
     f = {'key' : 'AIzaSyCMCTCPE4Rjla4uUs4vrO1nyQVa0Xu5XAc',
     'maxResults' : '50',
@@ -125,8 +127,8 @@ def main():
 
         if (start_date == latest_date):
             if (start_time_24 > latest_time_24):
-                print(start_date, latest_date)
-                print(latest_time_24)
+                # print(start_date, latest_date)
+                # print(latest_time_24)
                 if (latest_time_24 < '10:00'):
                     latest_time = end_time
                     latest_time_24 = end_time_24
@@ -134,10 +136,10 @@ def main():
                     latest_date = end_date
                     continue
                 
-                print(start_time_noampm, latest_time_noampm)
+                # print(start_time_noampm, latest_time_noampm)
                 FMT = '%H:%M'
                 tdelta = datetime.datetime.strptime(start_time_noampm, FMT) - datetime.datetime.strptime(latest_time_noampm, FMT)
-                print(abs(tdelta.total_seconds()))
+                # print(abs(tdelta.total_seconds()))
                 if abs(tdelta.total_seconds()) >= 1800:
                     return_list.append([latest_time, latest_date, start_time, start_date])
 
@@ -148,7 +150,7 @@ def main():
         latest_time_noampm = end_time_noampm
         latest_date = end_date
 
-    print(return_list)
+    # print(return_list)
     return render_template('index.html', api_data=return_list)
 
 # def get_credentials():
@@ -200,38 +202,50 @@ def oauth2callback():
 @app.route('/signup', methods = ['GET','POST'])
 def signup():
     name = request.form['name']
-    email = request.form['email']
-    location = request.form['location']
+    phone = request.form['phone']
     time = request.form['time']
+    location = request.form['location']
+    print(name, phone, time)
 
-    print(name, email, location, time)
+    with open('twilio_auth.txt') as f:
+        lines = f.read().splitlines() 
+
+    account_sid = lines[0]
+    auth_token = lines[1]
+    client = TwilioRestClient(account_sid, auth_token)
+
+    message = client.messages.create(to=phone, from_="(509)774-2976",
+                                         body="Hey " + name + "! This is your confirmation that you're getting boba with James at " + location + " on " + time + ". His phone number is (949)554-5535.")
+
+    message = client.messages.create(to="(949)554-5535", from_="(509)774-2976",
+                                         body=("Hey James, you're getting boba with " + name + " at " + location + " on " + time + ". Their phone number is " + phone + "."))
 
 
-    me = "bobawithjames@gmail.com"
-    you = email
+    # me = "bobawithjames@gmail.com"
+    # you = email
 
-    to = [you, 'jamesxue100@gmail.com']
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = "You're getting boba with James!"
-    msg['From'] = me
-    msg['To'] = you
-    msg['Cc'] = 'jamesxue100@gmail.com'
+    # to = [you, 'jamesxue100@gmail.com']
+    # msg = MIMEMultipart('alternative')
+    # msg['Subject'] = "You're getting boba with James!"
+    # msg['From'] = me
+    # msg['To'] = you
+    # msg['Cc'] = 'jamesxue100@gmail.com'
 
-    html = '<html><head></head><body><p>Hi there '+name+'!<br><br>You are scheduled for boba with James. :D<br><br>Location: '+location+'.<br>Time: '+time+'.<br><br>If you have any questions, email James (cced on this email), text James at (949)554-5535 or message him on <a href="https://www.facebook.com/jamesxue100">Facebook</a>.</p></body</html>'
+    # html = '<html><head></head><body><p>Hi there '+name+'!<br><br>You are scheduled for boba with James. :D<br><br>Location: '+location+'.<br>Time: '+time+'.<br><br>If you have any questions, email James (cced on this email), text James at (949)554-5535 or message him on <a href="https://www.facebook.com/jamesxue100">Facebook</a>.</p></body</html>'
 
-    part2 = MIMEText(html, 'html')
+    # part2 = MIMEText(html, 'html')
 
-    msg.attach(part2)
+    # msg.attach(part2)
 
-    s = smtplib.SMTP(host='smtp.gmail.com', port=587)
-    s.ehlo()
-    s.starttls()
-    s.ehlo()
-    username = "bobawithjames@gmail.com"
-    password = "bobawithjames123"
-    s.login(username, password)
-    s.sendmail(me, to, msg.as_string())
-    s.quit()
+    # s = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    # s.ehlo()
+    # s.starttls()
+    # s.ehlo()
+    # username = "bobawithjames@gmail.com"
+    # password = "bobawithjames123"
+    # s.login(username, password)
+    # s.sendmail(me, to, msg.as_string())
+    # s.quit()
 
     return redirect('/yay')
 
