@@ -208,14 +208,14 @@ def signup():
     print(name, phone, time)
 
     if 'ACCOUNT_SID' in os.environ:
-        account_sid = ENV['ACCOUNT_SID']
+        account_sid = os.environ['ACCOUNT_SID']
     else:
         with open('twilio_auth.txt') as f:
             lines = f.read().splitlines() 
         account_sid = lines[0]
         
     if 'AUTH_TOKEN' in os.environ:
-        auth_token = ENV['AUTH_TOKEN']
+        auth_token = os.environ['AUTH_TOKEN']
     else:
         with open('twilio_auth.txt') as f:
             lines = f.read().splitlines() 
