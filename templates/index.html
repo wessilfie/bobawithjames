@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Boba With James</title>
+    <link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+    <link href="/static/css/signup.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+           <li role="presentation" class = "active"><a href="http://ronswanson.herokuapp.com/">Random Ron Swanson</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Boba With James</h3>
+      </div>
+
+      <center><img src="/static/img/boba.png"></center>
+      <br>
+
+      <div class="jumbotron">
+        <h1>Boba with James</h1>
+        <h2>Just fill out the following!</h2>
+        <form class="form-signin" action="/signup" method ="post" onsubmit="">
+          <input type="text" name="name" id="inputName" class="form-control" placeholder="Name" required>
+          <input type="text" name="phone" id="inputPhone" class="form-control" placeholder="Phone number" required>
+          <input type="text" name="location" id="inputTime" class="form-control" placeholder="Preferred location" required>
+          <input type="text" name="time" id="inputTime" class="form-control" placeholder="Preferred time (see below)" required>
+          <br>
+          <!-- <p><a class="btn btn-lg btn-success" href="/signup" role="button">Submit!</a></p> -->
+          <input class="btn btn-lg btn-success" type="submit" value="Submit!"></input>
+        </form>
+      </div>
+
+
+      <center><h2> When is James available? </h2></center>
+      
+      {% if api_data %}
+       <table class="table">
+         <thead>
+          <tr>
+               <th>Date</th>
+               <th>From</th>
+               <th>Date</th>
+               <th>To</th>
+          </tr>
+         </thead>
+         <tbody>
+         {% for item in api_data %}
+          <td>{{ item[1] }}</td>
+          <td>{{ item[0] }}</td>
+          <td>{{ item[3] }}</td>
+          <td>{{ item[2] }}</td>
+        </tr>
+        
+        {% endfor %}
+          
+         </tbody>
+        
+      </table>
+      <p><center>Note: James usually isn't awake before 10AM (＠￣◇￣＠)。。。ｏＯ○.</center></p>
+      {% else %}
+
+        <h2>Looks like James isn't available anytime soon.</h2>
+      {% endif %}
+
+      <div class="row marketing">
+        <div style="float: left;"><img height="320px" WIDTH="224px" src="/static/img/jamesboba.jpg"><center><p>James in Taiwan with the OG boba</p></center></div>
+        <div style="float: right;" class="col-lg-7">
+          <h3>Who is James?</h3>
+          <p>I'm a guy who likes boba!</p>
+          <br>
+
+          <h3>Why get boba with James?</h3>
+          <p>Since I live in Claremont this year, I'm pretty far from Tea Magic and Cafe East, and I want an excuse to hang out with people lol.</p>
+          <br>
+
+          <h3>How long will it take?</h3>
+          <p>Probably about half an hour.</p>
+
+
+        </div>
+
+      </div>
+      
+      <footer class="footer">
+        <p><a href="http://www.james-xue.com">&copy; James Xue 2015</a></p>
+      </footer>
+
+    </div>
+  </body>
+</html>
+

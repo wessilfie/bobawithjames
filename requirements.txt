@@ -1,0 +1,7 @@
+Flask==0.10.1
+Jinja2==2.7.1
+Werkzeug==0.9.4
+google-api-python-client
+gunicorn==18.0
+python-dateutil==2.2 
+twilio==5.4.0
