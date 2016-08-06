@@ -26,7 +26,6 @@ from email.mime.multipart import MIMEMultipart
 import flask
 from flask import Flask, render_template, json, request, redirect
 
-import base64
 from time import strftime
 import dateutil.parser
 
