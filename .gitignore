@@ -2,3 +2,5 @@ venv
 *.pyc
 .env
 twilio_auth.txt
+example.py
+lib
