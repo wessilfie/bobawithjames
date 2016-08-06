@@ -210,8 +210,16 @@ def signup():
     with open('twilio_auth.txt') as f:
         lines = f.read().splitlines() 
 
-    account_sid = lines[0]
-    auth_token = lines[1]
+    if 'ACCOUNT_SID' in os.environ:
+        account_sid = ENV['ACCOUNT_SID']
+    else:
+        account_sid = lines[0]
+        
+    if 'AUTH_TOKEN' in os.environ:
+        auth_token = ENV['AUTH_TOKEN']
+    else:
+        auth_token = lines[1]
+
     client = TwilioRestClient(account_sid, auth_token)
 
     message = client.messages.create(to=phone, from_="(509)774-2976",
